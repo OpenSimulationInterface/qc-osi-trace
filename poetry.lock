@@ -31,7 +31,7 @@ pydantic-xml = "^2.11.0"
 type = "git"
 url = "https://github.com/asam-ev/qc-baselib-py.git"
 reference = "main"
-resolved_reference = "19434fedf7012fdb86d677e54b04d8b954eb10b0"
+resolved_reference = "bdc59f8f3adc1c134a2f103cee65ad326cd25136"
 
 [[package]]
 name = "black"

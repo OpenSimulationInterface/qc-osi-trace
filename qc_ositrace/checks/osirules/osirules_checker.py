@@ -115,12 +115,12 @@ def register_issue(
         level=level,
         rule_uid=rule_uid,
     )
-    result.add_file_location(
+    result.add_message_location(
         checker_bundle_name=constants.BUNDLE_NAME,
         checker_id=osirules_constants.CHECKER_ID,
         issue_id=issue_id,
-        row=index,
-        column=0,
+        index=index,
+        time=time,
         description=f"Message {index} at {time_str}: {description}",
     )
 
