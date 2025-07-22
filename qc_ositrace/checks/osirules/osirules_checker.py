@@ -214,75 +214,11 @@ def check_message_against_rules(
 
     # Process other rules for each set field
     for field, value in message.ListFields():
-        for rule_uid, rule in field_rules.get(field.name, []):
-            if "is_greater_than" in rule and not value > rule["is_greater_than"]:
-                register_issue(
-                    result,
-                    message,
-                    index,
-                    time,
-                    rule_uid,
-                    IssueSeverity.ERROR,
-                    description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not greater than {rule['is_greater_than']}.",
-                )
-            if (
-                "is_greater_than_or_equal_to" in rule
-                and not value >= rule["is_greater_than_or_equal_to"]
-            ):
-                register_issue(
-                    result,
-                    message,
-                    index,
-                    time,
-                    rule_uid,
-                    IssueSeverity.ERROR,
-                    description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not greater or equal to {rule['is_greater_than_or_equal_to']}.",
-                )
-            if "is_less_than" in rule and not value < rule["is_less_than"]:
-                register_issue(
-                    result,
-                    message,
-                    index,
-                    time,
-                    rule_uid,
-                    IssueSeverity.ERROR,
-                    description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not less than {rule['is_less_than']}.",
-                )
-            if (
-                "is_less_than_or_equal_to" in rule
-                and not value <= rule["is_less_than_or_equal_to"]
-            ):
-                register_issue(
-                    result,
-                    message,
-                    index,
-                    time,
-                    rule_uid,
-                    IssueSeverity.ERROR,
-                    description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not less or equal to {rule['is_less_than_or_equal_to']}.",
-                )
-            if "is_equal_to" in rule and not value == rule["is_equal_to"]:
-                register_issue(
-                    result,
-                    message,
-                    index,
-                    time,
-                    rule_uid,
-                    IssueSeverity.ERROR,
-                    description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not equal to {rule['is_equal_to']}.",
-                )
-            if "is_different_to" in rule and not value != rule["is_different_to"]:
-                register_issue(
-                    result,
-                    message,
-                    index,
-                    time,
-                    rule_uid,
-                    IssueSeverity.ERROR,
-                    description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not different from {rule['is_different_to']}.",
-                )
-            if "is_iso_country_code" in rule:
-                if value > 999 or value < 0:
+        is_repeated = field.label == field.LABEL_REPEATED
+        values = value if is_repeated else [value]
+        for value in values:
+            for rule_uid, rule in field_rules.get(field.name, []):
+                if "is_greater_than" in rule and not value > rule["is_greater_than"]:
                     register_issue(
                         result,
                         message,
@@ -290,9 +226,12 @@ def check_message_against_rules(
                         time,
                         rule_uid,
                         IssueSeverity.ERROR,
-                        description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not a valid numeric ISO country code (must be between 000 and 999).",
+                        description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not greater than {rule['is_greater_than']}.",
                     )
-                if iso3166.countries.get(value, None) is None:
+                if (
+                    "is_greater_than_or_equal_to" in rule
+                    and not value >= rule["is_greater_than_or_equal_to"]
+                ):
                     register_issue(
                         result,
                         message,
@@ -300,12 +239,53 @@ def check_message_against_rules(
                         time,
                         rule_uid,
                         IssueSeverity.ERROR,
-                        description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not a valid numeric ISO country code (not found in ISO 3166).",
+                        description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not greater or equal to {rule['is_greater_than_or_equal_to']}.",
                     )
-            if "is_globally_unique" in rule:
-                if value.value in id_message_map:
-                    existing_message = id_message_map[value.value]
-                    if existing_message != message:
+                if "is_less_than" in rule and not value < rule["is_less_than"]:
+                    register_issue(
+                        result,
+                        message,
+                        index,
+                        time,
+                        rule_uid,
+                        IssueSeverity.ERROR,
+                        description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not less than {rule['is_less_than']}.",
+                    )
+                if (
+                    "is_less_than_or_equal_to" in rule
+                    and not value <= rule["is_less_than_or_equal_to"]
+                ):
+                    register_issue(
+                        result,
+                        message,
+                        index,
+                        time,
+                        rule_uid,
+                        IssueSeverity.ERROR,
+                        description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not less or equal to {rule['is_less_than_or_equal_to']}.",
+                    )
+                if "is_equal_to" in rule and not value == rule["is_equal_to"]:
+                    register_issue(
+                        result,
+                        message,
+                        index,
+                        time,
+                        rule_uid,
+                        IssueSeverity.ERROR,
+                        description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not equal to {rule['is_equal_to']}.",
+                    )
+                if "is_different_to" in rule and not value != rule["is_different_to"]:
+                    register_issue(
+                        result,
+                        message,
+                        index,
+                        time,
+                        rule_uid,
+                        IssueSeverity.ERROR,
+                        description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not different from {rule['is_different_to']}.",
+                    )
+                if "is_iso_country_code" in rule:
+                    if value > 999 or value < 0:
                         register_issue(
                             result,
                             message,
@@ -313,24 +293,9 @@ def check_message_against_rules(
                             time,
                             rule_uid,
                             IssueSeverity.ERROR,
-                            description=f"Field '{field.name}' value {value.value} in message '{message.DESCRIPTOR.full_name}' is not globally unique, already used by different message '{existing_message.DESCRIPTOR.full_name}'.",
+                            description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not a valid numeric ISO country code (must be between 000 and 999).",
                         )
-            if "refers_to" in rule:
-                referred_message = id_message_map.get(value.value, None)
-                if referred_message is None:
-                    register_issue(
-                        result,
-                        message,
-                        index,
-                        time,
-                        rule_uid,
-                        IssueSeverity.ERROR,
-                        description=f"Field '{field.name}' value {value.value} in message '{message.DESCRIPTOR.full_name}' does not refer to any existing message.",
-                    )
-                else:
-                    # Check if referred message matches the expected type
-                    expected_type = f"""osi3.{rule['refers_to'].strip("'")}"""
-                    if referred_message.DESCRIPTOR.full_name != expected_type:
+                    if iso3166.countries.get(value, None) is None:
                         register_issue(
                             result,
                             message,
@@ -338,8 +303,46 @@ def check_message_against_rules(
                             time,
                             rule_uid,
                             IssueSeverity.ERROR,
-                            description=f"Field '{field.name}' value {value.value} in message '{message.DESCRIPTOR.full_name}' refers to message '{referred_message.DESCRIPTOR.full_name}', which does not match the expected type '{expected_type}'.",
+                            description=f"Field '{field.name}' value {value} in message '{message.DESCRIPTOR.full_name}' is not a valid numeric ISO country code (not found in ISO 3166).",
                         )
+                if "is_globally_unique" in rule:
+                    if value.value in id_message_map:
+                        existing_message = id_message_map[value.value]
+                        if existing_message != message:
+                            register_issue(
+                                result,
+                                message,
+                                index,
+                                time,
+                                rule_uid,
+                                IssueSeverity.ERROR,
+                                description=f"Field '{field.name}' value {value.value} in message '{message.DESCRIPTOR.full_name}' is not globally unique, already used by different message '{existing_message.DESCRIPTOR.full_name}'.",
+                            )
+                if "refers_to" in rule:
+                    referred_message = id_message_map.get(value.value, None)
+                    if referred_message is None:
+                        register_issue(
+                            result,
+                            message,
+                            index,
+                            time,
+                            rule_uid,
+                            IssueSeverity.ERROR,
+                            description=f"Field '{field.name}' value {value.value} in message '{message.DESCRIPTOR.full_name}' does not refer to any existing message.",
+                        )
+                    else:
+                        # Check if referred message matches the expected type
+                        expected_type = f"""osi3.{rule['refers_to'].strip("'")}"""
+                        if referred_message.DESCRIPTOR.full_name != expected_type:
+                            register_issue(
+                                result,
+                                message,
+                                index,
+                                time,
+                                rule_uid,
+                                IssueSeverity.ERROR,
+                                description=f"Field '{field.name}' value {value.value} in message '{message.DESCRIPTOR.full_name}' refers to message '{referred_message.DESCRIPTOR.full_name}', which does not match the expected type '{expected_type}'.",
+                            )
 
         # Recursively check nested messages
         if field.message_type is not None:
