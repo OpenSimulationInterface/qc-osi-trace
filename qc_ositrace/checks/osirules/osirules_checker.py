@@ -168,7 +168,12 @@ def check_message_against_rules(
 
     # Check if required fields are set
     for field_name, rules in field_rules.items():
-        has_field = message.HasField(field_name)
+        field_descriptor = message.DESCRIPTOR.fields_by_name[field_name]
+        if field_descriptor.label == field_descriptor.LABEL_REPEATED:
+            has_field = len(getattr(message, field_name)) > 0
+        else:
+            has_field = message.HasField(field_name)
+        
         for rule_uid, rule in rules:
             if "is_set" in rule and not has_field:
                 register_issue(
