@@ -30,8 +30,8 @@ pydantic-xml = "^2.11.0"
 [package.source]
 type = "git"
 url = "https://github.com/asam-ev/qc-baselib-py.git"
-reference = "fix/config-param-overrides"
-resolved_reference = "ae1a9d9ae495cfb0a264440df278640f682316e2"
+reference = "main"
+resolved_reference = "19434fedf7012fdb86d677e54b04d8b954eb10b0"
 
 [[package]]
 name = "black"
@@ -737,4 +737,4 @@ typing-extensions = ">=4.12.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "b5ab119aafab27bfa5624ce9bf7ae544a2ed0f4d373c9a3a7c715d395e0877ea"
+content-hash = "dd55f2e93f32d97b18f5a3a88281204db29c224692b1718fb54f6478dd592e6b"
