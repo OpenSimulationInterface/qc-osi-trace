@@ -12,6 +12,11 @@ GroundTruth:
     - is_set:
   map_reference:
     - is_set:
+  stationary_object:
+    - minimum_length: 1
+  moving_object:
+    - minimum_length: 1
+    - maximum_length: 1
 MovingObject:
   id:
   base:

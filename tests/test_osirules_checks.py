@@ -143,6 +143,20 @@ def test_osirules_automatic_rules(
             "groundtruth.map_reference.is_set",
             547,
         ),
+        (
+            "deserialization_expected_version/deserialization_expected_version_360.osi",
+            "SensorView",
+            "3.6.0",
+            "groundtruth.stationary_object.minimum_length_1",
+            547,
+        ),
+        (
+            "deserialization_expected_version/deserialization_expected_version_360.osi",
+            "SensorView",
+            "3.6.0",
+            "groundtruth.moving_object.maximum_length_1",
+            547,
+        ),
     ],
 )
 def test_osirules_custom_rules(
