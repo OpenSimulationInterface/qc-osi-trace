@@ -22,7 +22,7 @@ qc-osi-trace can be installed using pip or from source.
 qc-osi-trace can be installed using pip, so that it can be used as a library or as an application.
 
 ```bash
-pip install qc-osi-trace@git+https://github.com/PMSFIT/qc-osi-trace@main
+pip install qc-osi-trace@git+https://github.com/OpenSimulationInterface/qc-osi-trace@main
 ```
 
 **Note**: To install from different sources, you can replace `@main` with
