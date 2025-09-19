@@ -142,6 +142,10 @@ def evaluate_rule_condition(
         return False
     if "is_set" in rule:
         return True
+    if "minimum_length" in rule and len(values) >= rule["minimum_length"]:
+        return True
+    if "maximum_length" in rule and len(values) <= rule["maximum_length"]:
+        return True
     if "is_greater_than" in rule and all(
         [value > rule["is_greater_than"] for value in values]
     ):
@@ -196,8 +200,10 @@ def check_message_against_rules(
             continue
         if field_descriptor.label == field_descriptor.LABEL_REPEATED:
             has_field = True
+            values = getattr(message, field_name)
         else:
             has_field = message.HasField(field_name)
+            values = [getattr(message, field_name)] if has_field else []
         for rule_uid, rule in rules:
             if "is_set" in rule and not has_field:
                 register_issue(
@@ -208,6 +214,26 @@ def check_message_against_rules(
                     rule_uid,
                     IssueSeverity.ERROR,
                     description=f"Field '{field_name}' is not set in message '{message.DESCRIPTOR.full_name}' but should be set.",
+                )
+            if "minimum_length" in rule and len(values) < rule["minimum_length"]:
+                register_issue(
+                    result,
+                    message,
+                    index,
+                    time,
+                    rule_uid,
+                    IssueSeverity.ERROR,
+                    description=f"Field '{field_name}' in message '{message.DESCRIPTOR.full_name}' has less than {rule['minimum_length']} entries.",
+                )
+            if "maximum_length" in rule and len(values) > rule["maximum_length"]:
+                register_issue(
+                    result,
+                    message,
+                    index,
+                    time,
+                    rule_uid,
+                    IssueSeverity.ERROR,
+                    description=f"Field '{field_name}' in message '{message.DESCRIPTOR.full_name}' has more than {rule['maximum_length']} entries.",
                 )
             if (
                 "check_if" in rule
