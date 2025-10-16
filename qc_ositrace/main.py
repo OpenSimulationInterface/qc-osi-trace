@@ -29,6 +29,11 @@ def args_entrypoint() -> argparse.Namespace:
         help="Path to the input OSI Trace file.",
     )
     parser.add_argument(
+        "--osiTopic",
+        type=str,
+        help="Channel topic of a multi-trace OSI Trace file to select.",
+    )
+    parser.add_argument(
         "--osiType",
         type=str,
         help="Type of the OSI Trace file (e.g., 'SensorView', 'SensorData').",
@@ -101,6 +106,9 @@ def main():
         logging.info("Setting input file: %s", args.input_file)
         config.set_config_param("InputFile", str(args.input_file))
 
+    if args.osiTopic:
+        logging.info("Setting OSI Topic: %s", args.osiTopic)
+        config.set_config_param("osiTopic", args.osiTopic)
     if args.osiType:
         logging.info("Setting OSI Type: %s", args.osiType)
         config.set_config_param("osiType", args.osiType)
