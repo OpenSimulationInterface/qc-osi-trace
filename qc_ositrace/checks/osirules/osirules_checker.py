@@ -445,7 +445,12 @@ def run_checks(config: Configuration, result: Result) -> None:
     )
     expected_type_name = config.get_config_param("osiType")
 
-    trace = OSITrace(config.get_config_param("InputFile"), expected_type_name)
+    trace = OSITrace(
+        config.get_config_param("InputFile"),
+        expected_type_name,
+        False,
+        config.get_config_param("osiTopic"),
+    )
 
     result.register_checker(
         checker_bundle_name=constants.BUNDLE_NAME,

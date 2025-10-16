@@ -3,6 +3,8 @@ import sys
 
 from typing import Optional
 
+from contextlib import suppress
+
 import qc_ositrace.main as main
 
 from qc_ositrace import constants
@@ -17,6 +19,7 @@ def create_test_config(
     target_file_type: str,
     target_file_version: Optional[str] = None,
     target_file_rules: Optional[str] = None,
+    target_file_topic: Optional[str] = None,
 ):
     test_config = Configuration()
     test_config.set_config_param(name="InputFile", value=target_file_path)
@@ -25,6 +28,8 @@ def create_test_config(
         test_config.set_config_param(name="osiVersion", value=target_file_version)
     if target_file_rules is not None:
         test_config.set_config_param(name="osiRulesFile", value=target_file_rules)
+    if target_file_topic is not None:
+        test_config.set_config_param(name="osiTopic", value=target_file_topic)
     test_config.register_checker_bundle(checker_bundle_name=constants.BUNDLE_NAME)
     test_config.set_checker_bundle_param(
         checker_bundle_name=constants.BUNDLE_NAME,
@@ -61,5 +66,6 @@ def launch_main(monkeypatch):
 
 
 def cleanup_files():
-    os.remove(REPORT_FILE_PATH)
-    os.remove(CONFIG_FILE_PATH)
+    with suppress(Exception):
+        os.remove(REPORT_FILE_PATH)
+        os.remove(CONFIG_FILE_PATH)
