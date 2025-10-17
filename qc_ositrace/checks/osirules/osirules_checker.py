@@ -405,9 +405,9 @@ def check_message_against_rules(
                             description=f"Field '{field.name}' value {value.value} in message '{message.DESCRIPTOR.full_name}' does not refer to any existing message.",
                         )
                     else:
-                        # Check if referred message matches the expected type
-                        expected_type = f"""osi3.{rule['refers_to'].strip("'")}"""
-                        if referred_message.DESCRIPTOR.full_name != expected_type:
+                        # Check if referred message matches one of the expected types
+                        expected_types = ["osi3." + t for t in rule['refers_to']] if isinstance(rule['refers_to'], list) else ["osi3." + rule['refers_to']]
+                        if referred_message.DESCRIPTOR.full_name not in expected_types:
                             register_issue(
                                 result,
                                 message,
@@ -415,7 +415,7 @@ def check_message_against_rules(
                                 time,
                                 rule_uid,
                                 IssueSeverity.ERROR,
-                                description=f"Field '{field.name}' value {value.value} in message '{message.DESCRIPTOR.full_name}' refers to message '{referred_message.DESCRIPTOR.full_name}', which does not match the expected type '{expected_type}'.",
+                                description=f"Field '{field.name}' value {value.value} in message '{message.DESCRIPTOR.full_name}' refers to message '{referred_message.DESCRIPTOR.full_name}', which does not match one of the expected types '{expected_types}'.",
                             )
 
         # Recursively check nested messages
