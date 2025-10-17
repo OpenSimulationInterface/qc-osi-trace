@@ -13,7 +13,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.10"
 asam-qc-baselib = {git = "https://github.com/asam-ev/qc-baselib-py.git", rev = "main"}
-open-simulation-interface = {git = "https://github.com/OpenSimulationInterface/open-simulation-interface.git", rev = "v3.7.0"}
+osi-python = {git = "https://github.com/OpenSimulationInterface/osi-python.git", rev = "temp/osi3trace-mcap-support-fix"}
 pyyaml = "^6.0.0"
 iso3166 = "^2.1.1"
 

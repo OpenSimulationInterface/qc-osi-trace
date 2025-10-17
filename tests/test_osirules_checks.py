@@ -91,6 +91,20 @@ def test_osirules_expected_version(
             "sensorview.mounting_position.is_set",
             547,
         ),
+        (
+            "deserialization_expected_version/deserialization_expected_version_360.mcap",
+            "SensorView",
+            "3.6.0",
+            "sensorview.mounting_position.is_set",
+            0,
+        ),
+        (
+            "deserialization_expected_version/deserialization_expected_version_360.mcap",
+            "SensorView",
+            "3.7.0",
+            "sensorview.mounting_position.is_set",
+            547,
+        ),
     ],
 )
 def test_osirules_automatic_rules(

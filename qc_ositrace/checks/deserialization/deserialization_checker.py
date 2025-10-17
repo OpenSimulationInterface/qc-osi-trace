@@ -23,7 +23,10 @@ def run_checks(config: Configuration, result: Result) -> None:
     expected_type = OSITrace.map_message_type(expected_type_name)
 
     trace = OSITrace(
-        config.get_config_param("InputFile"), config.get_config_param("osiType")
+        config.get_config_param("InputFile"),
+        config.get_config_param("osiType"),
+        False,
+        config.get_config_param("osiTopic"),
     )
 
     result.register_checker(
