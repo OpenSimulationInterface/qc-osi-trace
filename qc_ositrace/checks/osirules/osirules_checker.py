@@ -445,15 +445,6 @@ def run_checks(config: Configuration, result: Result) -> None:
     )
     expected_type_name = config.get_config_param("osiType")
 
-    trace = OSITrace(config.get_config_param("InputFile"), expected_type_name)
-
-    result.register_checker(
-        checker_bundle_name=constants.BUNDLE_NAME,
-        checker_id=osirules_constants.CHECKER_ID,
-        description="Evaluates messages in the trace file against the OSI Rules of the given OSI version to guarantee they are in conformance with the standard OSI rules.",
-        summary="Checker validating OSI Rules compliance of messages in a trace file",
-    )
-
     if expected_version is None:
         logging.info(
             f"No expected version, falling back to {'.'.join([str(s) for s in fallback_version])} rules"
@@ -468,102 +459,119 @@ def run_checks(config: Configuration, result: Result) -> None:
         impresources.files(rulesyml)
         / f"osi_{'_'.join(map(str,expected_version or fallback_version))}.yml"
     )
+
+    result.register_checker(
+        checker_bundle_name=constants.BUNDLE_NAME,
+        checker_id=osirules_constants.CHECKER_ID,
+        description="Evaluates messages in the trace file against the OSI Rules of the given OSI version to guarantee they are in conformance with the standard OSI rules.",
+        summary="Checker validating OSI Rules compliance of messages in a trace file",
+    )
+
     try:
-        with rules_file.open("rt") as file:
-            rules = yaml.safe_load(file)
-        rules_version = expected_version or fallback_version
-        logging.info(
-            f"Read {'custom' if custom_rules_file else 'standard'} rules file for version {'.'.join([str(s) for s in rules_version])}"
-        )
+        trace = OSITrace(config.get_config_param("InputFile"), expected_type_name)
 
-    except FileNotFoundError:
-        logging.info(
-            f"No {'custom' if custom_rules_file else 'standard'} rules file for expected version {'.'.join([str(s) for s in expected_version])}, falling back to standard {'.'.join([str(s) for s in fallback_version])} rules"
-        )
-        fallback_rules_file = (
-            impresources.files(rulesyml)
-            / f"osi_{'_'.join(map(str,fallback_version))}.yml"
-        )
-        with fallback_rules_file.open("rt") as file:
-            rules = yaml.safe_load(file)
-        rules_version = fallback_version
-        logging.info(
-            f"Read standard rules file for version {'.'.join([str(s) for s in rules_version])}"
-        )
-
-    version_rule_uid = result.register_rule(
-        checker_bundle_name=constants.BUNDLE_NAME,
-        checker_id=osirules_constants.CHECKER_ID,
-        emanating_entity="asam.net",
-        standard="osi",
-        definition_setting="3.0.0",
-        rule_full_name="osirules.version_is_set",
-    )
-
-    exp_version_rule_uid = result.register_rule(
-        checker_bundle_name=constants.BUNDLE_NAME,
-        checker_id=osirules_constants.CHECKER_ID,
-        emanating_entity="asam.net",
-        standard="osi",
-        definition_setting="3.0.0",
-        rule_full_name="osirules.expected_version",
-    )
-
-    # Register rules from rules yml
-    rule_uid_map = register_automatic_rules(result, rules, rules_version)
-
-    logging.info("Executing osirules.version_is_set check")
-    logging.info("Executing osirules.expected_version check")
-    logging.info("Executing osirules automatic checks")
-
-    for index, message in enumerate(trace):
-        time = (
-            message.timestamp.seconds + message.timestamp.nanos * 1e-9
-            if hasattr(message, "timestamp") and message.HasField("timestamp")
-            else None
-        )
-        if not message.HasField("version"):
-            register_issue(
-                result,
-                message,
-                index,
-                time,
-                version_rule_uid,
-                IssueSeverity.ERROR,
-                description="Version field is not set in top-level message.",
-            )
-        elif (
-            expected_version is not None
-            and (
-                int(message.version.version_major),
-                int(message.version.version_minor),
-                int(message.version.version_patch),
-            )
-            != expected_version
-        ):
-            register_issue(
-                result,
-                message,
-                index,
-                time,
-                exp_version_rule_uid,
-                IssueSeverity.ERROR,
-                description=f"Version field value {message.version.version_major}.{message.version.version_minor}.{message.version.version_patch} is not the expected version {'.'.join([str(s) for s in expected_version])}.",
+        try:
+            with rules_file.open("rt") as file:
+                rules = yaml.safe_load(file)
+            rules_version = expected_version or fallback_version
+            logging.info(
+                f"Read {'custom' if custom_rules_file else 'standard'} rules file for version {'.'.join([str(s) for s in rules_version])}"
             )
 
-        id_message_map = {}
-        record_message_ids(message, id_message_map)
-        check_message_against_rules(
-            message, rule_uid_map, id_message_map, index, time, result
+        except FileNotFoundError as e:
+            logging.error(
+                f"No {'custom' if custom_rules_file else 'standard'} rules file for expected version {'.'.join([str(s) for s in expected_version or fallback_version])}: {e}"
+            )
+            raise RuntimeError(
+                f"No {'custom' if custom_rules_file else 'standard'} rules file for expected version {'.'.join([str(s) for s in expected_version or fallback_version])}: {e}"
+            ) from e
+
+        version_rule_uid = result.register_rule(
+            checker_bundle_name=constants.BUNDLE_NAME,
+            checker_id=osirules_constants.CHECKER_ID,
+            emanating_entity="asam.net",
+            standard="osi",
+            definition_setting="3.0.0",
+            rule_full_name="osirules.version_is_set",
         )
 
-    logging.info(
-        f"Issues found - {result.get_checker_issue_count(checker_bundle_name=constants.BUNDLE_NAME, checker_id=osirules_constants.CHECKER_ID)}"
-    )
+        exp_version_rule_uid = result.register_rule(
+            checker_bundle_name=constants.BUNDLE_NAME,
+            checker_id=osirules_constants.CHECKER_ID,
+            emanating_entity="asam.net",
+            standard="osi",
+            definition_setting="3.0.0",
+            rule_full_name="osirules.expected_version",
+        )
 
-    # TODO: Add logic to deal with error or to skip it
-    result.set_checker_status(
-        checker_bundle_name=constants.BUNDLE_NAME,
-        checker_id=osirules_constants.CHECKER_ID,
-        status=StatusType.COMPLETED,
-    )
+        # Register rules from rules yml
+        rule_uid_map = register_automatic_rules(result, rules, rules_version)
+
+        logging.info("Executing osirules.version_is_set check")
+        logging.info("Executing osirules.expected_version check")
+        logging.info("Executing osirules automatic checks")
+
+        for index, message in enumerate(trace):
+            time = (
+                message.timestamp.seconds + message.timestamp.nanos * 1e-9
+                if hasattr(message, "timestamp") and message.HasField("timestamp")
+                else None
+            )
+            if not message.HasField("version"):
+                register_issue(
+                    result,
+                    message,
+                    index,
+                    time,
+                    version_rule_uid,
+                    IssueSeverity.ERROR,
+                    description="Version field is not set in top-level message.",
+                )
+            elif (
+                expected_version is not None
+                and (
+                    int(message.version.version_major),
+                    int(message.version.version_minor),
+                    int(message.version.version_patch),
+                )
+                != expected_version
+            ):
+                register_issue(
+                    result,
+                    message,
+                    index,
+                    time,
+                    exp_version_rule_uid,
+                    IssueSeverity.ERROR,
+                    description=f"Version field value {message.version.version_major}.{message.version.version_minor}.{message.version.version_patch} is not the expected version {'.'.join([str(s) for s in expected_version])}.",
+                )
+
+            id_message_map = {}
+            record_message_ids(message, id_message_map)
+            check_message_against_rules(
+                message, rule_uid_map, id_message_map, index, time, result
+            )
+
+        logging.info(
+            f"Issues found - {result.get_checker_issue_count(checker_bundle_name=constants.BUNDLE_NAME, checker_id=osirules_constants.CHECKER_ID)}"
+        )
+
+        result.set_checker_status(
+            checker_bundle_name=constants.BUNDLE_NAME,
+            checker_id=osirules_constants.CHECKER_ID,
+            status=StatusType.COMPLETED,
+        )
+
+    except Exception as e:
+        logging.error(f"Error during osirules checks: {e}")
+        logging.exception(e)
+        result.set_checker_status(
+            checker_bundle_name=constants.BUNDLE_NAME,
+            checker_id=osirules_constants.CHECKER_ID,
+            status=StatusType.ERROR,
+        )
+        result.add_checker_summary(
+            checker_bundle_name=constants.BUNDLE_NAME,
+            checker_id=osirules_constants.CHECKER_ID,
+            content=f"Error: {str(e)}.",
+        )

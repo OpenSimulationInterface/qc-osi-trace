@@ -22,10 +22,6 @@ def run_checks(config: Configuration, result: Result) -> None:
     expected_type_name = config.get_config_param("osiType") or "SensorView"
     expected_type = OSITrace.map_message_type(expected_type_name)
 
-    trace = OSITrace(
-        config.get_config_param("InputFile"), config.get_config_param("osiType")
-    )
-
     result.register_checker(
         checker_bundle_name=constants.BUNDLE_NAME,
         checker_id=deserialization_constants.CHECKER_ID,
@@ -69,51 +65,69 @@ def run_checks(config: Configuration, result: Result) -> None:
         rule_full_name="deserialization.expected_version",
     )
 
-    logging.info("Executing deserialization.expected_type check")
-    logging.info("Executing deserialization.version_is_set check")
-    logging.info("Executing deserialization.expected_version check")
+    try:
+        trace = OSITrace(
+            config.get_config_param("InputFile"), config.get_config_param("osiType")
+        )
 
-    for message in trace:
-        if type(message) is not expected_type:
-            issue_id = result.register_issue(
-                checker_bundle_name=constants.BUNDLE_NAME,
-                checker_id=deserialization_constants.CHECKER_ID,
-                description=f"Deserialized message is not of expected type {expected_type}.",
-                level=IssueSeverity.ERROR,
-                rule_uid=type_rule_uid,
-            )
-        if not message.HasField("version"):
-            issue_id = result.register_issue(
-                checker_bundle_name=constants.BUNDLE_NAME,
-                checker_id=deserialization_constants.CHECKER_ID,
-                description="Version field is not set in top-level message.",
-                level=IssueSeverity.ERROR,
-                rule_uid=version_rule_uid,
-            )
-        elif (
-            expected_version is not None
-            and (
-                int(message.version.version_major),
-                int(message.version.version_minor),
-                int(message.version.version_patch),
-            )
-            != expected_version
-        ):
-            issue_id = result.register_issue(
-                checker_bundle_name=constants.BUNDLE_NAME,
-                checker_id=deserialization_constants.CHECKER_ID,
-                description=f"Version field value {message.version.version_major}.{message.version.version_minor}.{message.version.version_patch} is not the expected version {'.'.join([str(s) for s in expected_version])}.",
-                level=IssueSeverity.ERROR,
-                rule_uid=exp_version_rule_uid,
-            )
+        logging.info("Executing deserialization.expected_type check")
+        logging.info("Executing deserialization.version_is_set check")
+        logging.info("Executing deserialization.expected_version check")
 
-    logging.info(
-        f"Issues found - {result.get_checker_issue_count(checker_bundle_name=constants.BUNDLE_NAME, checker_id=deserialization_constants.CHECKER_ID)}"
-    )
+        for message in trace:
+            if type(message) is not expected_type:
+                issue_id = result.register_issue(
+                    checker_bundle_name=constants.BUNDLE_NAME,
+                    checker_id=deserialization_constants.CHECKER_ID,
+                    description=f"Deserialized message is not of expected type {expected_type}.",
+                    level=IssueSeverity.ERROR,
+                    rule_uid=type_rule_uid,
+                )
+            if not message.HasField("version"):
+                issue_id = result.register_issue(
+                    checker_bundle_name=constants.BUNDLE_NAME,
+                    checker_id=deserialization_constants.CHECKER_ID,
+                    description="Version field is not set in top-level message.",
+                    level=IssueSeverity.ERROR,
+                    rule_uid=version_rule_uid,
+                )
+            elif (
+                expected_version is not None
+                and (
+                    int(message.version.version_major),
+                    int(message.version.version_minor),
+                    int(message.version.version_patch),
+                )
+                != expected_version
+            ):
+                issue_id = result.register_issue(
+                    checker_bundle_name=constants.BUNDLE_NAME,
+                    checker_id=deserialization_constants.CHECKER_ID,
+                    description=f"Version field value {message.version.version_major}.{message.version.version_minor}.{message.version.version_patch} is not the expected version {'.'.join([str(s) for s in expected_version])}.",
+                    level=IssueSeverity.ERROR,
+                    rule_uid=exp_version_rule_uid,
+                )
 
-    # TODO: Add logic to deal with error or to skip it
-    result.set_checker_status(
-        checker_bundle_name=constants.BUNDLE_NAME,
-        checker_id=deserialization_constants.CHECKER_ID,
-        status=StatusType.COMPLETED,
-    )
+        logging.info(
+            f"Issues found - {result.get_checker_issue_count(checker_bundle_name=constants.BUNDLE_NAME, checker_id=deserialization_constants.CHECKER_ID)}"
+        )
+
+        result.set_checker_status(
+            checker_bundle_name=constants.BUNDLE_NAME,
+            checker_id=deserialization_constants.CHECKER_ID,
+            status=StatusType.COMPLETED,
+        )
+
+    except Exception as e:
+        logging.error(f"Error during deserialization checks: {e}")
+        logging.exception(e)
+        result.set_checker_status(
+            checker_bundle_name=constants.BUNDLE_NAME,
+            checker_id=deserialization_constants.CHECKER_ID,
+            status=StatusType.ERROR,
+        )
+        result.add_checker_summary(
+            checker_bundle_name=constants.BUNDLE_NAME,
+            checker_id=deserialization_constants.CHECKER_ID,
+            content=f"Error: {str(e)}.",
+        )
