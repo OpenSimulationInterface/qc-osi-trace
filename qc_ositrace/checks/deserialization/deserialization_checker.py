@@ -66,9 +66,13 @@ def run_checks(config: Configuration, result: Result) -> None:
     )
 
     try:
-        trace = OSITrace(
-            config.get_config_param("InputFile"), config.get_config_param("osiType")
-        )
+        try:
+            trace = OSITrace(
+                config.get_config_param("InputFile"), config.get_config_param("osiType")
+            )
+        except Exception as e:
+            logging.error(f"Error reading input file: {e}")
+            raise RuntimeError(f"Error reading input file: {e}") from e
 
         logging.info("Executing deserialization.expected_type check")
         logging.info("Executing deserialization.version_is_set check")

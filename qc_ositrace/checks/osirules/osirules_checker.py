@@ -468,7 +468,11 @@ def run_checks(config: Configuration, result: Result) -> None:
     )
 
     try:
-        trace = OSITrace(config.get_config_param("InputFile"), expected_type_name)
+        try:
+            trace = OSITrace(config.get_config_param("InputFile"), expected_type_name)
+        except Exception as e:
+            logging.error(f"Error reading input file: {e}")
+            raise RuntimeError(f"Error reading input file: {e}") from e
 
         try:
             with rules_file.open("rt") as file:
