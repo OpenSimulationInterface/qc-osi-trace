@@ -10,6 +10,9 @@ from qc_ositrace.checks.deserialization import deserialization_checker
 from qc_ositrace.checks.osirules import osirules_checker
 
 logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
+logging.getLogger().addFilter(
+    lambda record: "A check should address exactly one rule" not in record.getMessage()
+)
 
 
 def args_entrypoint() -> argparse.Namespace:
