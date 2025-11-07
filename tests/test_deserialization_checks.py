@@ -94,3 +94,37 @@ def test_deserialization_mcap_topic(
     else:
         check_issues(rule_uid, issue_count, issue_severity)
     cleanup_files()
+
+
+@pytest.mark.parametrize(
+    "target_file,target_topic,target_type,target_version,issue_count",
+    [
+        ("360", "MySensorView", "SensorView", "3.5.0", 547),
+        ("360", "MySensorView", "SensorView", "3.6.0", 0),
+        ("360", "Foo", "SensorView", "3.5.0", 547),
+        ("360", "Foo", "SensorView", "3.6.0", 0),
+    ],
+)
+def test_deserialization_single_topic(
+    target_file: str,
+    target_topic: str,
+    target_type: str,
+    target_version: str,
+    issue_count: int,
+    monkeypatch,
+) -> None:
+    base_path = "tests/data/deserialization_expected_version/"
+    target_file_name = f"deserialization_expected_version_{target_file}.osi"
+    rule_uid = "asam.net:osi:3.0.0:deserialization.expected_version"
+    issue_severity = IssueSeverity.ERROR
+
+    target_file_path = os.path.join(base_path, target_file_name)
+    create_test_config(
+        target_file_path, target_type, target_version, None, target_topic
+    )
+    launch_main(monkeypatch)
+    if issue_count < 0:
+        check_failure(deserialization_checker_id)
+    else:
+        check_issues(rule_uid, issue_count, issue_severity)
+    cleanup_files()

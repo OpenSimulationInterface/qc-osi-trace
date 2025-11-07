@@ -68,10 +68,9 @@ def run_checks(config: Configuration, result: Result) -> None:
     try:
         try:
             trace = OSITrace(
-                config.get_config_param("InputFile"),
-                config.get_config_param("osiType"),
-                False,
-                config.get_config_param("osiTopic"),
+                path=config.get_config_param("InputFile"),
+                type_name=config.get_config_param("osiType"),
+                topic=config.get_config_param("osiTopic"),
             )
         except Exception as e:
             logging.error(f"Error reading input file: {e}")
