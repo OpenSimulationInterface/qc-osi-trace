@@ -406,7 +406,11 @@ def check_message_against_rules(
                         )
                     else:
                         # Check if referred message matches one of the expected types
-                        expected_types = ["osi3." + t for t in rule['refers_to']] if isinstance(rule['refers_to'], list) else ["osi3." + rule['refers_to']]
+                        expected_types = (
+                            ["osi3." + t for t in rule["refers_to"]]
+                            if isinstance(rule["refers_to"], list)
+                            else ["osi3." + rule["refers_to"]]
+                        )
                         if referred_message.DESCRIPTOR.full_name not in expected_types:
                             register_issue(
                                 result,
@@ -470,10 +474,9 @@ def run_checks(config: Configuration, result: Result) -> None:
     try:
         try:
             trace = OSITrace(
-                config.get_config_param("InputFile"),
-                expected_type_name,
-                False,
-                config.get_config_param("osiTopic"),
+                path=config.get_config_param("InputFile"),
+                type_name=expected_type_name,
+                topic=config.get_config_param("osiTopic"),
             )
         except Exception as e:
             logging.error(f"Error reading input file: {e}")
