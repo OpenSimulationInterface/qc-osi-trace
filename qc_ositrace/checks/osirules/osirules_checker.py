@@ -24,7 +24,7 @@ def rule_name_from_rule(rule: dict) -> str:
     def flatten_rule(r):
         items = []
         for k, v in r.items():
-            items.append(k.lower())
+            items.append(k)
             if v is None:
                 continue
             if isinstance(v, dict):
@@ -39,7 +39,7 @@ def rule_name_from_rule(rule: dict) -> str:
                         items.append(item)
             else:
                 items.append(
-                    v.replace(".", "_").lower()
+                    v.replace(".", "_")
                     if isinstance(v, str)
                     else str(v).replace(".", "_")
                 )
@@ -66,7 +66,7 @@ def register_automatic_rule(
                     emanating_entity="asam.net",
                     standard="osi",
                     definition_setting=".".join([str(s) for s in rules_version]),
-                    rule_full_name=f"osirules.{'.'.join(x.lower() for x in keys)}.{rulename}",
+                    rule_full_name=f"osirules.{'.'.join(keys)}.{rulename}",
                 )
                 rule_osi3_type = f"osi3.{'.'.join(keys[:-1])}"
                 rule_map.setdefault(rule_osi3_type, {})
