@@ -13,7 +13,7 @@ This project implements the OSI Trace Checker for the ASAM Quality Checker proje
     - [Execute tests](#execute-tests)
   - [Contributing](#contributing)
 
-## Installation and usage
+## Installation
 
 qc-osi-trace can be installed using pip or from source.
 
@@ -28,7 +28,15 @@ pip install qc-osi-trace@git+https://github.com/OpenSimulationInterface/qc-osi-t
 **Note**: To install from different sources, you can replace `@main` with
 your desired target. For example, `develop` branch as `@develop`.
 
-#### To use as a library
+### Installation from source
+
+```bash
+pip install .
+```
+
+## Usage
+
+### To use as a library
 
 After installation, the usage is similar to the one expressed in the
 [`main.py`](./qc_ositrace/main.py) script:
@@ -37,46 +45,39 @@ After installation, the usage is similar to the one expressed in the
 from qc_ositrace.checks.deserialization import deserialization_checker
 ```
 
-#### To use as an application
+### To use as an application
 
-```
+```bash
 qc_ositrace --help
 
-usage: QC OSI Trace Checker [-h] (-d | -c CONFIG_PATH)
+usage: QC OSI Trace Checker [-h] (-d | -c CONFIG_PATH) [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
+                            [--osiVersion OSIVERSION] [--osiRulesFile OSIRULESFILE] [-r RESULT_FILE]
+                            [--output_config OUTPUT_CONFIG]
 
-This is a collection of scripts for checking validity of OSI Trace (.osi)
-files.
-
-options:
-  -h, --help            show this help message and exit
-  -d, --default_config
-  -c CONFIG_PATH, --config_path CONFIG_PATH
-```
-
-### Installation from source
-
-The project can be installed from source using [Poetry](https://python-poetry.org/).
-
-```bash
-poetry install
-```
-
-After installing from source, the usage is the same as shown above.
-
-It is also possible to execute the qc_ositrace application using Poetry.
-
-```bash
-poetry run qc_ositrace --help
-
-usage: QC OSI Trace Checker [-h] (-d | -c CONFIG_PATH)
-
-This is a collection of scripts for checking validity of OSI Trace (.osi)
-files.
+This is a collection of scripts for checking validity of OSI Trace (.osi) files.
 
 options:
   -h, --help            show this help message and exit
   -d, --default_config
-  -c CONFIG_PATH, --config_path CONFIG_PATH
+  -c, --config_path CONFIG_PATH
+  -i, --input_file INPUT_FILE
+                        Path to the input OSI Trace file.
+  --osiTopic OSITOPIC   Channel topic of a multi-trace OSI Trace file to select.
+  --osiType OSITYPE     Type of the OSI Trace file (e.g., 'SensorView', 'SensorData').
+  --osiVersion OSIVERSION
+                        Expected version of the OSI Trace file (e.g., '3.7.0').
+  --osiRulesFile OSIRULESFILE
+                        Path to a custom OSI rules file.
+  -r, --result_file RESULT_FILE
+                        Path to the output result file.
+  --output_config OUTPUT_CONFIG
+                        Path to save the configuration after running the checks.
+```
+
+Example checking a simple SensorData trace file against version 3.7.0 rules using default configuration:
+
+```bash
+qc_ositrace -d -r results.xqar --osiType SensorData --osiVersion 3.7.0 -i 20210818T150542Z_sd_370_300_1523_example_sensordata_trace.osi
 ```
 
 ### Example output
@@ -107,43 +108,24 @@ $ qc_ositrace -c example_config/config-errors.xml
 2024-07-31 16:15:05,806 - Done
 ```
 
-## Tests
+### Use with ASAM Quality Checker Framework
 
-To run the tests, you need to install the extra test dependency.
+This checker bundle can be used stand-alone, or with the overall tooling provided by the [ASAM QC Framework](https://www.asam.net/standards/asam-quality-checker/).
 
-```bash
-poetry install --with dev
-```
-
-### Execute tests
+For example, to view the checker bundle results obtained in the example above in a GUI with external viewer support:
 
 ```bash
-poetry run pytest -vv
+ReportGUI results.xqar
 ```
 
-They should output something similar to:
-
-```bash
-============================= test session starts =============================
-platform win32 -- Python 3.10.4, pytest-8.2.2, pluggy-1.5.0 -- C:\Users\pmai\src\ASAM\qc-osi-trace\.venv\Scripts\python.exe
-cachedir: .pytest_cache
-rootdir: C:\Users\pmai\src\ASAM\qc-osi-trace
-collecting ... collected 4 items
-
-tests/test_deserialization_checks.py::test_deserialization_version_is_set_examples[invalid-SensorView-547] PASSED [ 25%]
-tests/test_deserialization_checks.py::test_deserialization_version_is_set_examples[valid-SensorView-0] PASSED [ 50%]
-tests/test_deserialization_checks.py::test_deserialization_expected_version[360-SensorView-3.5.0-547] PASSED [ 75%]
-tests/test_deserialization_checks.py::test_deserialization_expected_version[360-SensorView-3.6.0-0] PASSED [100%]
-
-============================== 4 passed in 0.39s ==============================
-```
-
-You can check more options for pytest at its [own documentation](https://docs.pytest.org/).
+The framework provides further tooling to merge results from multiple checker bundles, provide textual reports, or reports that fit into CI pipelines.
+Please see its [documentation](https://github.com/asam-ev/qc-framework/blob/main/doc/manual/readme.md) for more information.
 
 ## Contributing
 
-For contributing, you need to install the development requirements.
-For that run:
+### Installation from source
+
+For contributing, the project should be installed from source using [Poetry](https://python-poetry.org/), including the development requirements:
 
 ```bash
 poetry install --with dev
@@ -154,3 +136,86 @@ You need to have pre-commit installed and install the hooks:
 ```
 pre-commit install
 ```
+
+After installing from source, the usage is the same as shown above.
+
+It is also possible to execute the qc_ositrace application using Poetry:
+
+```bash
+poetry run qc_ositrace --help
+
+usage: QC OSI Trace Checker [-h] (-d | -c CONFIG_PATH) [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
+                            [--osiVersion OSIVERSION] [--osiRulesFile OSIRULESFILE] [-r RESULT_FILE]
+                            [--output_config OUTPUT_CONFIG]
+
+This is a collection of scripts for checking validity of OSI Trace (.osi) files.
+
+options:
+  -h, --help            show this help message and exit
+  -d, --default_config
+  -c, --config_path CONFIG_PATH
+  -i, --input_file INPUT_FILE
+                        Path to the input OSI Trace file.
+  --osiTopic OSITOPIC   Channel topic of a multi-trace OSI Trace file to select.
+  --osiType OSITYPE     Type of the OSI Trace file (e.g., 'SensorView', 'SensorData').
+  --osiVersion OSIVERSION
+                        Expected version of the OSI Trace file (e.g., '3.7.0').
+  --osiRulesFile OSIRULESFILE
+                        Path to a custom OSI rules file.
+  -r, --result_file RESULT_FILE
+                        Path to the output result file.
+  --output_config OUTPUT_CONFIG
+                        Path to save the configuration after running the checks.
+```
+
+### Tests
+
+Executing the tests:
+
+```bash
+poetry run pytest -vv
+```
+
+They should output something similar to:
+
+```bash
+================================================= test session starts =================================================
+platform win32 -- Python 3.13.9, pytest-8.4.1, pluggy-1.6.0 -- C:\Users\pmai\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\Local\pypoetry\Cache\virtualenvs\qc-osi-trace-aBsWsCJH-py3.13\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\pmai\src\qc-osi-trace
+configfile: pyproject.toml
+collected 28 items
+
+tests/test_deserialization_checks.py::test_deserialization_version_is_set_examples[invalid-SensorView-547] PASSED [  3%]
+tests/test_deserialization_checks.py::test_deserialization_version_is_set_examples[valid-SensorView-0] PASSED    [  7%]
+tests/test_deserialization_checks.py::test_deserialization_expected_version[360-SensorView-3.5.0-547] PASSED     [ 10%]
+tests/test_deserialization_checks.py::test_deserialization_expected_version[360-SensorView-3.6.0-0] PASSED       [ 14%]
+tests/test_deserialization_checks.py::test_deserialization_mcap_topic[360-MySensorView-SensorView-3.5.0-547] PASSED [ 17%]
+tests/test_deserialization_checks.py::test_deserialization_mcap_topic[360-MySensorView-SensorView-3.6.0-0] PASSED [ 21%]
+tests/test_deserialization_checks.py::test_deserialization_mcap_topic[360-Foo-SensorView-3.6.0--1] PASSED        [ 25%]
+tests/test_deserialization_checks.py::test_deserialization_single_topic[360-MySensorView-SensorView-3.5.0-547] PASSED [ 28%]
+tests/test_deserialization_checks.py::test_deserialization_single_topic[360-MySensorView-SensorView-3.6.0-0] PASSED [ 32%]
+tests/test_deserialization_checks.py::test_deserialization_single_topic[360-Foo-SensorView-3.5.0-547] PASSED     [ 35%]
+tests/test_deserialization_checks.py::test_deserialization_single_topic[360-Foo-SensorView-3.6.0-0] PASSED       [ 39%]
+tests/test_execution.py::test_nonexistent_input_file PASSED                                                      [ 42%]
+tests/test_osirules_checks.py::test_osirules_version_is_set_examples[invalid-SensorView-547] PASSED              [ 46%]
+tests/test_osirules_checks.py::test_osirules_version_is_set_examples[valid-SensorView-0] PASSED                  [ 50%]
+tests/test_osirules_checks.py::test_osirules_expected_version[360-SensorView-3.5.0-547] PASSED                   [ 53%]
+tests/test_osirules_checks.py::test_osirules_expected_version[360-SensorView-3.6.0-0] PASSED                     [ 57%]
+tests/test_osirules_checks.py::test_osirules_automatic_rules[deserialization_version_is_set/deserialization_version_is_set_invalid.osi-SensorView-3.6.0-SensorView.version.is_set-0] PASSED [ 60%]
+tests/test_osirules_checks.py::test_osirules_automatic_rules[deserialization_version_is_set/deserialization_version_is_set_invalid.osi-SensorView-3.7.0-SensorView.version.is_set-547] PASSED [ 64%]
+tests/test_osirules_checks.py::test_osirules_automatic_rules[deserialization_expected_version/deserialization_expected_version_360.osi-SensorView-3.6.0-SensorView.mounting_position.is_set-0] PASSED [ 67%]
+tests/test_osirules_checks.py::test_osirules_automatic_rules[deserialization_expected_version/deserialization_expected_version_360.osi-SensorView-3.7.0-SensorView.mounting_position.is_set-547] PASSED [ 71%]
+tests/test_osirules_checks.py::test_osirules_automatic_rules[deserialization_expected_version/deserialization_expected_version_360.mcap-SensorView-3.6.0-SensorView.mounting_position.is_set-0] PASSED [ 75%]
+tests/test_osirules_checks.py::test_osirules_automatic_rules[deserialization_expected_version/deserialization_expected_version_360.mcap-SensorView-3.7.0-SensorView.mounting_position.is_set-547] PASSED [ 78%]
+tests/test_osirules_checks.py::test_osirules_custom_rules[deserialization_version_is_set/deserialization_version_is_set_invalid.osi-SensorView-3.6.0-SensorView.version.is_set-0] PASSED [ 82%]
+tests/test_osirules_checks.py::test_osirules_custom_rules[deserialization_expected_version/deserialization_expected_version_360.osi-SensorView-3.6.0-GroundTruth.country_code.is_set-547] PASSED [ 85%]
+tests/test_osirules_checks.py::test_osirules_custom_rules[deserialization_expected_version/deserialization_expected_version_360.osi-SensorView-3.6.0-GroundTruth.proj_string.is_set-547] PASSED [ 89%]
+tests/test_osirules_checks.py::test_osirules_custom_rules[deserialization_expected_version/deserialization_expected_version_360.osi-SensorView-3.6.0-GroundTruth.map_reference.is_set-547] PASSED [ 92%]
+tests/test_osirules_checks.py::test_osirules_custom_rules[deserialization_expected_version/deserialization_expected_version_360.osi-SensorView-3.6.0-GroundTruth.stationary_object.minimum_length_1-547] PASSED [ 96%]
+tests/test_osirules_checks.py::test_osirules_custom_rules[deserialization_expected_version/deserialization_expected_version_360.osi-SensorView-3.6.0-GroundTruth.moving_object.maximum_length_1-547] PASSED [100%]
+
+================================================= 28 passed in 17.21s =================================================
+```
+
+You can check more options for pytest at its [own documentation](https://docs.pytest.org/).
