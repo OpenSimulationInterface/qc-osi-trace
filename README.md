@@ -54,7 +54,7 @@ usage: QC OSI Trace Checker [-h] (-d | -c CONFIG_PATH) [-i INPUT_FILE] [--osiTop
                             [--osiVersion OSIVERSION] [--osiRulesFile OSIRULESFILE] [-r RESULT_FILE]
                             [--output_config OUTPUT_CONFIG]
 
-This is a collection of scripts for checking validity of OSI Trace (.osi) files.
+ASAM QC checker bundle for checking the validity of OSI Trace (.osi/.mcap) files.
 
 options:
   -h, --help            show this help message and exit
@@ -148,7 +148,7 @@ usage: QC OSI Trace Checker [-h] (-d | -c CONFIG_PATH) [-i INPUT_FILE] [--osiTop
                             [--osiVersion OSIVERSION] [--osiRulesFile OSIRULESFILE] [-r RESULT_FILE]
                             [--output_config OUTPUT_CONFIG]
 
-This is a collection of scripts for checking validity of OSI Trace (.osi) files.
+ASAM QC checker bundle for checking the validity of OSI Trace (.osi/.mcap) files.
 
 options:
   -h, --help            show this help message and exit
