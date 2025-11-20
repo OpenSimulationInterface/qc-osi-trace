@@ -15,7 +15,7 @@ logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
 def args_entrypoint() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="QC OSI Trace Checker",
-        description="This is a collection of scripts for checking validity of OSI Trace (.osi) files.",
+        description="ASAM QC checker bundle for checking the validity of OSI Trace (.osi/.mcap) files.",
     )
 
     group = parser.add_mutually_exclusive_group(required=True)
