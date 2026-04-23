@@ -58,8 +58,7 @@ ASAM QC checker bundle for checking the validity of OSI Trace (.osi/.mcap) files
 
 options:
   -h, --help            show this help message and exit
-  -d, --default_config  Deprecated. Retained for backward compatibility. Default configuration is used whenever -c is
-                        omitted.
+  -d, --default_config  Deprecated. Default configuration is used whenever -c is omitted.
   -c, --config_path CONFIG_PATH
   -i, --input_file INPUT_FILE
                         Path to the input OSI Trace file.
@@ -153,8 +152,7 @@ ASAM QC checker bundle for checking the validity of OSI Trace (.osi/.mcap) files
 
 options:
   -h, --help            show this help message and exit
-  -d, --default_config  Deprecated. Retained for backward compatibility. Default configuration is used whenever -c is
-                        omitted.
+  -d, --default_config  Deprecated. Default configuration is used whenever -c is omitted.
   -c, --config_path CONFIG_PATH
   -i, --input_file INPUT_FILE
                         Path to the input OSI Trace file.

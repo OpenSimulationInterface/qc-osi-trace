@@ -23,7 +23,7 @@ def args_entrypoint() -> argparse.Namespace:
         "-d",
         "--default_config",
         action="store_true",
-        help="Deprecated. Retained for backward compatibility. Default configuration is used whenever -c is omitted.",
+        help="Deprecated. Default configuration is used whenever -c is omitted.",
     )
     config_group.add_argument("-c", "--config_path")
 
