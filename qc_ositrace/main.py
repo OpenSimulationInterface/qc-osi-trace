@@ -95,7 +95,7 @@ def main():
     logging.info("Initializing checks")
 
     config = Configuration()
-    if args.default_config or not args.config_path:
+    if args.default_config or args.config_path is None:
         logging.info("Using default configuration")
         config.register_checker_bundle(checker_bundle_name=constants.BUNDLE_NAME)
     else:
