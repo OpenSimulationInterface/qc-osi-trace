@@ -50,7 +50,7 @@ from qc_ositrace.checks.deserialization import deserialization_checker
 ```bash
 qc_ositrace --help
 
-usage: QC OSI Trace Checker [-h] [-c CONFIG_PATH] [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
+usage: QC OSI Trace Checker [-h] [-d] [-c CONFIG_PATH] [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
                             [--osiVersion OSIVERSION] [--osiRulesFile OSIRULESFILE] [-r RESULT_FILE]
                             [--output_config OUTPUT_CONFIG]
 
@@ -58,6 +58,8 @@ ASAM QC checker bundle for checking the validity of OSI Trace (.osi/.mcap) files
 
 options:
   -h, --help            show this help message and exit
+  -d, --default_config  Deprecated. Retained for backward compatibility. Default configuration is used whenever -c is
+                        omitted.
   -c, --config_path CONFIG_PATH
   -i, --input_file INPUT_FILE
                         Path to the input OSI Trace file.
@@ -143,7 +145,7 @@ It is also possible to execute the qc_ositrace application using Poetry:
 ```bash
 poetry run qc_ositrace --help
 
-usage: QC OSI Trace Checker [-h] [-c CONFIG_PATH] [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
+usage: QC OSI Trace Checker [-h] [-d] [-c CONFIG_PATH] [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
                             [--osiVersion OSIVERSION] [--osiRulesFile OSIRULESFILE] [-r RESULT_FILE]
                             [--output_config OUTPUT_CONFIG]
 
@@ -151,6 +153,8 @@ ASAM QC checker bundle for checking the validity of OSI Trace (.osi/.mcap) files
 
 options:
   -h, --help            show this help message and exit
+  -d, --default_config  Deprecated. Retained for backward compatibility. Default configuration is used whenever -c is
+                        omitted.
   -c, --config_path CONFIG_PATH
   -i, --input_file INPUT_FILE
                         Path to the input OSI Trace file.

@@ -18,6 +18,12 @@ def args_entrypoint() -> argparse.Namespace:
         description="ASAM QC checker bundle for checking the validity of OSI Trace (.osi/.mcap) files.",
     )
 
+    parser.add_argument(
+        "-d",
+        "--default_config",
+        action="store_true",
+        help="Deprecated. Retained for backward compatibility. Default configuration is used whenever -c is omitted.",
+    )
     parser.add_argument("-c", "--config_path")
 
     parser.add_argument(
