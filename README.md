@@ -50,7 +50,7 @@ from qc_ositrace.checks.deserialization import deserialization_checker
 ```bash
 qc_ositrace --help
 
-usage: QC OSI Trace Checker [-h] [-d] [-c CONFIG_PATH] [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
+usage: QC OSI Trace Checker [-h] [-d | -c CONFIG_PATH] [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
                             [--osiVersion OSIVERSION] [--osiRulesFile OSIRULESFILE] [-r RESULT_FILE]
                             [--output_config OUTPUT_CONFIG]
 
@@ -145,7 +145,7 @@ It is also possible to execute the qc_ositrace application using Poetry:
 ```bash
 poetry run qc_ositrace --help
 
-usage: QC OSI Trace Checker [-h] [-d] [-c CONFIG_PATH] [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
+usage: QC OSI Trace Checker [-h] [-d | -c CONFIG_PATH] [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
                             [--osiVersion OSIVERSION] [--osiRulesFile OSIRULESFILE] [-r RESULT_FILE]
                             [--output_config OUTPUT_CONFIG]
 
