@@ -50,7 +50,7 @@ from qc_ositrace.checks.deserialization import deserialization_checker
 ```bash
 qc_ositrace --help
 
-usage: QC OSI Trace Checker [-h] (-d | -c CONFIG_PATH) [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
+usage: QC OSI Trace Checker [-h] [-c CONFIG_PATH] [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
                             [--osiVersion OSIVERSION] [--osiRulesFile OSIRULESFILE] [-r RESULT_FILE]
                             [--output_config OUTPUT_CONFIG]
 
@@ -58,7 +58,6 @@ ASAM QC checker bundle for checking the validity of OSI Trace (.osi/.mcap) files
 
 options:
   -h, --help            show this help message and exit
-  -d, --default_config
   -c, --config_path CONFIG_PATH
   -i, --input_file INPUT_FILE
                         Path to the input OSI Trace file.
@@ -77,7 +76,7 @@ options:
 Example checking a simple SensorData trace file against version 3.7.0 rules using default configuration:
 
 ```bash
-qc_ositrace -d -r results.xqar --osiType SensorData --osiVersion 3.7.0 -i 20210818T150542Z_sd_370_300_1523_example_sensordata_trace.osi
+qc_ositrace -r results.xqar --osiType SensorData --osiVersion 3.7.0 -i 20210818T150542Z_sd_370_300_1523_example_sensordata_trace.osi
 ```
 
 ### Example output
@@ -144,7 +143,7 @@ It is also possible to execute the qc_ositrace application using Poetry:
 ```bash
 poetry run qc_ositrace --help
 
-usage: QC OSI Trace Checker [-h] (-d | -c CONFIG_PATH) [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
+usage: QC OSI Trace Checker [-h] [-c CONFIG_PATH] [-i INPUT_FILE] [--osiTopic OSITOPIC] [--osiType OSITYPE]
                             [--osiVersion OSIVERSION] [--osiRulesFile OSIRULESFILE] [-r RESULT_FILE]
                             [--output_config OUTPUT_CONFIG]
 
@@ -152,7 +151,6 @@ ASAM QC checker bundle for checking the validity of OSI Trace (.osi/.mcap) files
 
 options:
   -h, --help            show this help message and exit
-  -d, --default_config
   -c, --config_path CONFIG_PATH
   -i, --input_file INPUT_FILE
                         Path to the input OSI Trace file.
