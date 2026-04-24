@@ -134,7 +134,7 @@ def evaluate_rule_condition(
             f"Field '{field_name}' not found in message '{message.DESCRIPTOR.full_name}'. Rule evaluation skipped."
         )
         return False
-    if field_descriptor.label == field_descriptor.LABEL_REPEATED:
+    if field_descriptor.is_repeated:
         values = getattr(message, field_name)
     else:
         values = [getattr(message, field_name)] if message.HasField(field_name) else []
@@ -198,7 +198,7 @@ def check_message_against_rules(
                 f"Field '{field_name}' not found in message '{message.DESCRIPTOR.full_name}'. Skipping rules check."
             )
             continue
-        if field_descriptor.label == field_descriptor.LABEL_REPEATED:
+        if field_descriptor.is_repeated:
             has_field = True
             values = getattr(message, field_name)
         else:
@@ -264,7 +264,7 @@ def check_message_against_rules(
 
     # Process other rules for each set field
     for field, value in message.ListFields():
-        values = value if field.label == field.LABEL_REPEATED else [value]
+        values = value if field.is_repeated else [value]
         for rule_uid, rule in field_rules.get(field.name, []):
             if "is_greater_than" in rule and not all(
                 [value > rule["is_greater_than"] for value in values]
