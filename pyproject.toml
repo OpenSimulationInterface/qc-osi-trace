@@ -16,7 +16,7 @@ asam-qc-baselib = {git = "https://github.com/asam-ev/qc-baselib-py.git", rev = "
 osi-python = {git = "https://github.com/OpenSimulationInterface/osi-python.git", rev = "main"}
 pyyaml = "^6.0.0"
 iso3166 = "^2.1.1"
-protobuf = ">=6.31.0"
+protobuf = ">=6.30.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.2"
