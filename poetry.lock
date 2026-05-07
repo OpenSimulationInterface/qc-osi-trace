@@ -14,7 +14,7 @@ files = [
 
 [[package]]
 name = "asam-qc-baselib"
-version = "1.0.0"
+version = "1.1.0"
 description = "Python base library for ASAM Quality Checker Framework"
 optional = false
 python-versions = "^3.10"
@@ -30,8 +30,8 @@ pydantic-xml = "^2.11.0"
 [package.source]
 type = "git"
 url = "https://github.com/asam-ev/qc-baselib-py.git"
-reference = "main"
-resolved_reference = "bdc59f8f3adc1c134a2f103cee65ad326cd25136"
+reference = "HEAD"
+resolved_reference = "416d20d20bfbd36a2d6fe5ca496c175487477885"
 
 [[package]]
 name = "black"
@@ -419,8 +419,8 @@ typing-extensions = ">=4.9,<5.0"
 [package.source]
 type = "git"
 url = "https://github.com/OpenSimulationInterface/osi-python.git"
-reference = "main"
-resolved_reference = "90f307637f35f6bafcbe6b14905738965d04507e"
+reference = "HEAD"
+resolved_reference = "e2bf95ea5bde400e88a8c3acffddde5d85a439aa"
 
 [[package]]
 name = "packaging"
@@ -940,4 +940,4 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "3c3f0f5ca716db37fdddecde7ea969bc8a21e7ee3576798f45a13cda003117de"
+content-hash = "01c30cb799b8b02fffbeea75273fd613510215001f7e4502c6b26cb1851c521b"
