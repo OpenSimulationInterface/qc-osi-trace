@@ -12,8 +12,8 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-asam-qc-baselib = {git = "https://github.com/asam-ev/qc-baselib-py.git", rev = "main"}
-osi-python = {git = "https://github.com/OpenSimulationInterface/osi-python.git", rev = "main"}
+asam-qc-baselib = "^1.1.0"
+osi-python = {git = "https://github.com/OpenSimulationInterface/osi-python.git"}
 pyyaml = "^6.0.0"
 iso3166 = "^2.1.1"
 protobuf = ">=6.30.2"
