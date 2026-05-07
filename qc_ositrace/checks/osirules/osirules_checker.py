@@ -10,6 +10,7 @@ from qc_ositrace.checks.osirules import (
 )
 
 from osi3trace.osi_trace import OSITrace
+import google.protobuf.descriptor
 import google.protobuf.message
 
 from importlib import resources as impresources
@@ -125,6 +126,17 @@ def register_issue(
     )
 
 
+if hasattr(google.protobuf.descriptor.FieldDescriptor, "is_repeated"):
+
+    def field_descriptor_is_repeated(field_descriptor) -> bool:
+        return bool(field_descriptor.is_repeated)
+
+else:
+
+    def field_descriptor_is_repeated(field_descriptor) -> bool:
+        return field_descriptor.label == field_descriptor.LABEL_REPEATED
+
+
 def evaluate_rule_condition(
     message: google.protobuf.message.Message, field_name: str, rule: dict
 ) -> bool:
@@ -134,7 +146,7 @@ def evaluate_rule_condition(
             f"Field '{field_name}' not found in message '{message.DESCRIPTOR.full_name}'. Rule evaluation skipped."
         )
         return False
-    if field_descriptor.label == field_descriptor.LABEL_REPEATED:
+    if field_descriptor_is_repeated(field_descriptor):
         values = getattr(message, field_name)
     else:
         values = [getattr(message, field_name)] if message.HasField(field_name) else []
@@ -198,7 +210,7 @@ def check_message_against_rules(
                 f"Field '{field_name}' not found in message '{message.DESCRIPTOR.full_name}'. Skipping rules check."
             )
             continue
-        if field_descriptor.label == field_descriptor.LABEL_REPEATED:
+        if field_descriptor_is_repeated(field_descriptor):
             has_field = True
             values = getattr(message, field_name)
         else:
@@ -264,7 +276,7 @@ def check_message_against_rules(
 
     # Process other rules for each set field
     for field, value in message.ListFields():
-        values = value if field.label == field.LABEL_REPEATED else [value]
+        values = value if field_descriptor_is_repeated(field) else [value]
         for rule_uid, rule in field_rules.get(field.name, []):
             if "is_greater_than" in rule and not all(
                 [value > rule["is_greater_than"] for value in values]
