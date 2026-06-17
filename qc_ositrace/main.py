@@ -18,9 +18,14 @@ def args_entrypoint() -> argparse.Namespace:
         description="ASAM QC checker bundle for checking the validity of OSI Trace (.osi/.mcap) files.",
     )
 
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-d", "--default_config", action="store_true")
-    group.add_argument("-c", "--config_path")
+    config_group = parser.add_mutually_exclusive_group()
+    config_group.add_argument(
+        "-d",
+        "--default_config",
+        action="store_true",
+        help="Deprecated. Default configuration is used whenever -c is omitted.",
+    )
+    config_group.add_argument("-c", "--config_path")
 
     parser.add_argument(
         "-i",
@@ -95,7 +100,7 @@ def main():
     logging.info("Initializing checks")
 
     config = Configuration()
-    if args.default_config:
+    if args.config_path is None:
         logging.info("Using default configuration")
         config.register_checker_bundle(checker_bundle_name=constants.BUNDLE_NAME)
     else:
